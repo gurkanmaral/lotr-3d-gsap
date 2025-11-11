@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useMediaQuery } from 'react-responsive'
+import { SplitText } from 'gsap/all'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -13,6 +14,17 @@ const Hero = () => {
     useEffect(() => {
         const start = isMobile ? 'top 20%' : 'top top'
 
+        // Split text first
+        const titleSplit = new SplitText('#about h2', { type: 'words' })
+        const paragraphSplits = Array.from(document.querySelectorAll('#about p')).map(p =>
+            new SplitText(p, { type: 'lines' })
+        )
+
+        // Step 0: Hide words/lines initially
+        gsap.set(titleSplit.words, { opacity: 0, yPercent: 100, display: 'inline-block' })
+        paragraphSplits.forEach(split => {
+            gsap.set(split.lines, { opacity: 0, yPercent: 100, display: 'block' })
+        })
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: '#art',
@@ -27,27 +39,44 @@ const Hero = () => {
         tl.fromTo(
             '.masked-img',
             {
-                scale: 1.2,
-                webkitMaskSize: '30%',
-                maskSize: '30%',
+                scale: 1.1,
+                maskSize: '40%',
             },
             {
                 scale: 1,
-                webkitMaskSize: '300%',
                 maskSize: '300%',
                 ease: 'power2.inOut',
                 duration: 3,
             }
         )
-
         tl.to('.masked-img', {
-            webkitMaskImage: 'none',
             maskImage: 'none',
             duration: 2,
             ease: 'power2.inOut',
         })
 
-        return () => tl.scrollTrigger?.kill()
+        tl.to(titleSplit.words, {
+            opacity: 1,
+            yPercent: 0,
+            duration: 2,
+            ease: 'expo.out',
+            stagger: 0.2,
+        })
+
+        paragraphSplits.forEach((split, i) => {
+            tl.to(split.lines, {
+                opacity: 1,
+                yPercent: 0,
+                duration: 2,
+                ease: 'expo.out',
+                stagger: 0.15,
+            }, i === 0 ? '-=1' : '>-0.5')
+        })
+        return () => {
+            tl.scrollTrigger?.kill()
+            titleSplit.revert()
+            paragraphSplits.forEach(split => split.revert())
+        }
     }, [isMobile])
 
     return (
@@ -58,6 +87,18 @@ const Hero = () => {
                     alt="LOTR Hero"
                     className="masked-img size-full object-cover"
                 />
+            </div>
+
+            <div id="about" className="absolute text-center max-w-2xl px-6">
+                <h2 className="text-white text-4xl font-bold mb-4">
+                    The Journey of Middle-Earth
+                </h2>
+                <p className="text-white text-lg leading-relaxed ">
+                    Through mist and shadow, across mountains and rivers, destiny awaits those who dare to walk beyond the Shire.
+                </p>
+                <p className="text-white text-lg leading-relaxed">
+                    asdasd
+                </p>
             </div>
         </section>
     )
