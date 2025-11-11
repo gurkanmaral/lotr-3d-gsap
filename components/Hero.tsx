@@ -20,15 +20,10 @@ const Hero = () => {
             new SplitText(p, { type: 'lines' })
         )
 
-        // Step 0: Hide words/lines initially
-        gsap.set(titleSplit.words, { opacity: 0, yPercent: 100, display: 'inline-block' })
-        paragraphSplits.forEach(split => {
-            gsap.set(split.lines, { opacity: 0, yPercent: 100, display: 'block' })
-        })
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: '#art',
-                start,
+                start:start,
                 end: 'bottom center',
                 scrub: 1,
                 pin: true,
@@ -55,18 +50,18 @@ const Hero = () => {
             ease: 'power2.inOut',
         })
 
-        tl.to(titleSplit.words, {
-            opacity: 1,
-            yPercent: 0,
+        tl.from(titleSplit.words, {
+            opacity: 0,
+            yPercent: 100,
             duration: 2,
             ease: 'expo.out',
             stagger: 0.2,
         })
 
         paragraphSplits.forEach((split, i) => {
-            tl.to(split.lines, {
-                opacity: 1,
-                yPercent: 0,
+            tl.from(split.lines, {
+                opacity: 0,
+                yPercent: 100,
                 duration: 2,
                 ease: 'expo.out',
                 stagger: 0.15,
@@ -96,7 +91,7 @@ const Hero = () => {
                 <p className="text-white text-lg leading-relaxed ">
                     Through mist and shadow, across mountains and rivers, destiny awaits those who dare to walk beyond the Shire.
                 </p>
-                <p className="text-white text-lg leading-relaxed">
+                <p className="text-white text-lg leading-relaxed ">
                     asdasd
                 </p>
             </div>
